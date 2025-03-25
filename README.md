@@ -7,7 +7,7 @@ KB Insurance adalah sistem manajemen asuransi komprehensif yang dibangun dengan 
 ## Demo Aplikasi
 
 Demo aplikasi dapat diakses di:
-**[https://demokbinsurance.anonimak.my.id](https://demokbinsurance.anonimak.my.id)**
+**[demokbinsurance.anonimak.my.id](http://demokbinsurance.anonimak.my.id)**
 
 ### Kredensial Demo
 - **Username:** testing

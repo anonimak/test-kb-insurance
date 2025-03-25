@@ -2,10 +2,9 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [main, master]
+    branches: [master]
   pull_request:
-    branches: [main, master]
-  workflow_dispatch:
+    branches: [master]
 
 jobs:
   build-and-push:
@@ -13,9 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -26,7 +22,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push multi-platform image
+      # Create build timestamp for versioning
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -37,4 +38,8 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/test-kb-insurance:${{ steps.date.outputs.date }}
           build-args: |
             CI_ENVIRONMENT=production
-            VITE_API_URL=https://api.example.com
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/test-kb-insurance:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/test-kb-insurance:buildcache,mode=max
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
